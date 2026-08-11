@@ -30,9 +30,9 @@ public class PurchaseOrderItem {
     @Column(name = "received_qty", nullable = false)
     private int receivedQty = 0;
 
-    @Column(name = "unit_cost", nullable = false, precision = 10, scale = 2)
+    @Column(name = "unit_cost", nullable = false)
     private double unitCost;
 
-    @Column(name = "sub_total", nullable = false, precision = 10, scale = 2)
+    @Column(name = "sub_total", nullable = false)
     private double subTotal;
 }

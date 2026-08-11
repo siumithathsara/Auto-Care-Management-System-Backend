@@ -26,7 +26,7 @@ public class Service {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "standard_fee", nullable = false, precision = 10, scale = 2)
+    @Column(name = "standard_fee", nullable = false)
     private double standardFee;
 
     @Column(name = "estimated_time_mins")

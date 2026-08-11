@@ -32,10 +32,10 @@ public class JobCardPart {
     @Column(nullable = false)
     private int quantity;
 
-    @Column(name = "unit_price", nullable = false, precision = 10, scale = 2)
+    @Column(name = "unit_price", nullable = false)
     private double unitPrice;
 
-    @Column(name = "sub_total", nullable = false, precision = 10, scale = 2)
+    @Column(name = "sub_total", nullable = false)
     private double subTotal;
 
     @Enumerated(EnumType.STRING)

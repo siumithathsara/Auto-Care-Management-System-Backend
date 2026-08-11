@@ -26,10 +26,10 @@ public class SparePart {
     @Column(name = "brand", length = 50)
     private String brand;
 
-    @Column(name = "cost_price", nullable = false, precision = 10, scale = 2)
+    @Column(name = "cost_price", nullable = false)
     private double costPrice;
 
-    @Column(name = "unit_price", nullable = false, precision = 10, scale = 2)
+    @Column(name = "unit_price", nullable = false)
     private double unitPrice;
 
     @Column(name = "quantity_in_stock", nullable = false)

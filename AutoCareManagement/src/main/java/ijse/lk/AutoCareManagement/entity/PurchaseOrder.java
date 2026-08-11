@@ -27,7 +27,7 @@ public class PurchaseOrder {
     @JoinColumn(name = "created_by", nullable = false)
     private Users createdBy;
 
-    @Column(name = "total_amount", nullable = false, precision = 10, scale = 2)
+    @Column(name = "total_amount", nullable = false)
     private double totalAmount = 0.0;
 
     @Column(name = "order_date", nullable = false, updatable = false)

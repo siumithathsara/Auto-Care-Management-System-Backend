@@ -28,22 +28,21 @@ public class Invoice {
     @JoinColumn(name = "issued_by", nullable = false)
     private Users issuedBy;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(nullable = false)
     private double subtotal;
 
-    @Column(name = "tax_amount", precision = 10, scale = 2)
+    @Column(name = "tax_amount")
     private double taxAmount = 0.0;
 
-    @Column(precision = 10, scale = 2)
     private double discount = 0.0;
 
-    @Column(name = "total_amount", nullable = false, precision = 10, scale = 2)
+    @Column(name = "total_amount", nullable = false)
     private double totalAmount;
 
-    @Column(name = "paid_amount", nullable = false, precision = 10, scale = 2)
+    @Column(name = "paid_amount", nullable = false)
     private double paidAmount = 0.0;
 
-    @Column(name = "balance_amount", nullable = false, precision = 10, scale = 2)
+    @Column(name = "balance_amount", nullable = false)
     private double balanceAmount = 0.0;
 
     @Enumerated(EnumType.STRING)

@@ -30,7 +30,7 @@ public class AiRecommendation {
     @Column(name = "reason_prompt", columnDefinition = "TEXT")
     private String reasonPrompt;
 
-    @Column(name = "confidence_score", precision = 5, scale = 2)
+    @Column(name = "confidence_score")
     private double confidenceScore;
 
     @Enumerated(EnumType.STRING)

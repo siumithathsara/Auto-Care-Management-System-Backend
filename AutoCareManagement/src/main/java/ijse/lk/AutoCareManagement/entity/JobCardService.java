@@ -24,7 +24,7 @@ public class JobCardService {
     @JoinColumn(name = "service_id", nullable = false)
     private Service service;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(nullable = false)
     private double price;
 
     @Enumerated(EnumType.STRING)

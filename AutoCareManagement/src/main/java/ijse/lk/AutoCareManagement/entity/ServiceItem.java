@@ -25,7 +25,7 @@ public class ServiceItem {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(nullable = false)
     private double price;
 
     @Column(name = "estimated_duration_minutes")

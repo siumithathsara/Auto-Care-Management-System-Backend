@@ -38,7 +38,7 @@ public class InternalStockIssue {
     @Column(nullable = false)
     private int quantity;
 
-    @Column(name = "unit_cost", precision = 10, scale = 2)
+    @Column(name = "unit_cost")
     private double unitCost;
 
     @Column(name = "usage_reason", length = 255)
