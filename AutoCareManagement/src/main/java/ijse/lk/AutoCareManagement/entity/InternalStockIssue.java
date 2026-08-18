@@ -29,7 +29,7 @@ public class InternalStockIssue {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "issued_by_user", nullable = false)
-    private Users issuedByUser;
+    private User issuedByUser;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_section_id")

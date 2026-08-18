@@ -10,8 +10,11 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDTO {
+public class UserResponseDTO {
+
+
     private long userId;
+    private String userCode;
     private String username;
     private String password;
     private String email;
@@ -19,14 +22,16 @@ public class UserDTO {
     private Role role;
     private UserStatus status;
     private LocalDateTime createdAt;
+    private String nicPassport;
+    private String address;
 
-    public UserDTO(String username, String password, Role role) {
+    public UserResponseDTO(String username, String password, Role role) {
         this.username = username;
         this.password = password;
         this.role = role;
     }
 
-    public UserDTO(long userId, String username, Role role, String password) {
+    public UserResponseDTO(long userId, String username, Role role, String password) {
         this.userId = userId;
         this.username = username;
         this.role = role;

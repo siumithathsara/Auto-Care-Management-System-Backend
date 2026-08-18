@@ -25,7 +25,7 @@ public class PurchaseOrder {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by", nullable = false)
-    private Users createdBy;
+    private User createdBy;
 
     @Column(name = "total_amount", nullable = false)
     private double totalAmount = 0.0;

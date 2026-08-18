@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.catalina.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,7 +26,7 @@ public class JobCard {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "advisor_id", nullable = false)
-    private Users advisor;
+    private User advisor;
 
     @Column(name = "mileage_in", nullable = false)
     private int mileageIn;

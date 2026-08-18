@@ -1,15 +1,36 @@
 package ijse.lk.AutoCareManagement.repository;
 
-import ijse.lk.AutoCareManagement.entity.Users;
+import ijse.lk.AutoCareManagement.entity.User;
+import ijse.lk.AutoCareManagement.enumeration.UserStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<Users, Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
-    Optional<Users> findByUsernameAndPassword(String username, String password);
+    Optional<User> findByUsernameAndPassword(String username, String password);
 
-    Optional<Users> findByUsername(String username);
+    Optional<User> findByUsername(String username);
+
+    Optional<User> findByUserCodeAndStatus(String userCode, UserStatus status);
+
+    List<User> findAllByStatus(UserStatus status);
+
+    Optional<User> findByUsernameAndStatus(String username, UserStatus status);
+
+    List<User> findByUsernameContainingIgnoreCaseAndStatus(String username, UserStatus status);
+
+    Boolean existsByUsername(String username);
+
+    Boolean existsByUserCode(String userCode);
+
+    Boolean existsByEmail(String email);
+
+    @Query("SELECT COUNT(u) FROM User u")
+    long getAllUserCount();
+
 }

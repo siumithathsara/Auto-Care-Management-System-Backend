@@ -30,7 +30,7 @@ public class JobStatusHistory {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "changed_by", nullable = false)
-    private Users changedBy;
+    private User changedBy;
 
     @Column(name = "changed_at", updatable = false)
     private LocalDateTime changedAt;

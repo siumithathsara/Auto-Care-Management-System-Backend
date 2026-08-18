@@ -14,12 +14,15 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Users {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private long userId;
+
+    @Column(unique = true, nullable = false)
+    private String userCode;
 
     @Column(unique = true, nullable = false, length = 100)
     private String username;
@@ -34,11 +37,11 @@ public class Users {
     private String phone;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false)
     private Role role;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false)
     private UserStatus status;
 
     @Column(name = "created_at", updatable = false)
@@ -51,6 +54,13 @@ public class Users {
             this.status = UserStatus.ACTIVE;
         }
     }
+
+    @Column(name = "nic_passport", length = 50)
+    private String nicPassport;
+
+    @Column(columnDefinition = "TEXT")
+    private String address;
+
     @OneToMany(mappedBy = "advisor", cascade = CascadeType.ALL)
     private List<JobCard> jobCards;
 }

@@ -26,7 +26,7 @@ public class Invoice {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "issued_by", nullable = false)
-    private Users issuedBy;
+    private User issuedBy;
 
     @Column(nullable = false)
     private double subtotal;

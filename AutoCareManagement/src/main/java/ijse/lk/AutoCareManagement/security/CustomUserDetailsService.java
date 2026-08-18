@@ -18,7 +18,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<ijse.lk.AutoCareManagement.entity.Users> optionalUser = userRepository.findByUsername(username);
+        Optional<ijse.lk.AutoCareManagement.entity.User> optionalUser = userRepository.findByUsername(username);
 
         if(optionalUser.isEmpty())
             throw new RuntimeException("Sorry no user");

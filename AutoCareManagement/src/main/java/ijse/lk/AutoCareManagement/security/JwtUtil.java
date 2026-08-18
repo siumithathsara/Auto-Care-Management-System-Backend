@@ -1,6 +1,6 @@
 package ijse.lk.AutoCareManagement.security;
 
-import ijse.lk.AutoCareManagement.dto.UserDTO;
+import ijse.lk.AutoCareManagement.dto.UserResponseDTO;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -24,7 +24,7 @@ public class JwtUtil {
     @Value("${jwt.expiration}")
     private Long expiration;
 
-    public String generateToken(UserDTO user) {
+    public String generateToken(UserResponseDTO user) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", user.getUserId());
         claims.put("role", user.getRole());

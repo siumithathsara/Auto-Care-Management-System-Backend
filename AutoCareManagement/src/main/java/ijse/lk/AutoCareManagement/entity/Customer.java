@@ -19,7 +19,7 @@ public class Customer {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", unique = true, nullable = false)
-    private Users user;
+    private User user;
 
     @Column(name = "nic_passport", length = 50)
     private String nicPassport;

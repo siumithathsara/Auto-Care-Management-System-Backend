@@ -27,7 +27,7 @@ public class JobSection {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "supervisor_id", nullable = false)
-    private Users supervisor;
+    private User supervisor;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mechanic_employee_id", nullable = false)
