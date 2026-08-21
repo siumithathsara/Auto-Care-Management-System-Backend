@@ -21,6 +21,10 @@ public class Vehicle {
     @Column(name = "vehicle_id")
     private long vehicleId;
 
+    @Column(unique = true, nullable = false)
+    private String vehicleCode;
+
+
     @Column(name = "license_plate", unique = true, nullable = false, length = 20)
     private String licensePlate;
 
@@ -47,7 +51,7 @@ public class Vehicle {
     @Column(name = "transmission_type", nullable = false, length = 20)
     private TransmissionType transmissionType;
 
-    @Column(name = "qr_code_hash", unique = true, nullable = false)
+    @Column(name = "qr_code_hash", unique = true)
     private String qrCodeHash;
 
     @Column(length = 30)
@@ -62,6 +66,6 @@ public class Vehicle {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id", nullable = false)
-    private Customer customer;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User customer;
 }
