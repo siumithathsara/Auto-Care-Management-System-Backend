@@ -30,8 +30,13 @@ public class UserRequestDTO {
     @Pattern(regexp = "^[0-9]{10}$", message = "Phone number must be a valid 10-digit number")
     private String phone;
 
+    @NotBlank(message = "NIC or Passport number is required")
+    @Pattern(regexp = "^([0-9]{9}[vVxX]|[0-9]{12}|[A-Za-z0-9]{6,9})$",
+            message = "Invalid NIC or Passport format")
     private String nicPassport;
 
+    @NotBlank(message = "Address is required")
+    @Size(min = 5, max = 255, message = "Address must be between 5 and 255 characters")
     private String address;
 
 //    admin use this constructor to create a new user with username, phone, email and password
