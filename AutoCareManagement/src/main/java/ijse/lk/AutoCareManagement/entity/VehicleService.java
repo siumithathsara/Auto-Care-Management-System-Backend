@@ -11,7 +11,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Service {
+public class VehicleService {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

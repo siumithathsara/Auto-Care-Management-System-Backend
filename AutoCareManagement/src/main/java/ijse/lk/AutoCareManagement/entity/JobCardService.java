@@ -22,7 +22,7 @@ public class JobCardService {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_id", nullable = false)
-    private Service service;
+    private VehicleService vehicleService;
 
     @Column(nullable = false)
     private double price;

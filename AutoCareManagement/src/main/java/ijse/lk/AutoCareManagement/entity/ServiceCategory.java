@@ -32,7 +32,7 @@ public class ServiceCategory {
 
     @ToString.Exclude
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Service> services;
+    private List<VehicleService> vehicleServices;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
