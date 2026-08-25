@@ -1,5 +1,7 @@
 package ijse.lk.AutoCareManagement.dto;
 
+import ijse.lk.AutoCareManagement.enumeration.Role;
+import ijse.lk.AutoCareManagement.enumeration.UserStatus;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -39,8 +41,19 @@ public class UserRequestDTO {
     @Size(min = 5, max = 255, message = "Address must be between 5 and 255 characters")
     private String address;
 
+    private Role role;
+
 //    admin use this constructor to create a new user with username, phone, email and password
 
+
+    public UserRequestDTO(String username, String password, String email, String phone, String nicPassport, String address) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.phone = phone;
+        this.nicPassport = nicPassport;
+        this.address = address;
+    }
 
     public UserRequestDTO(String username, String password, String email, String phone) {
         this.username = username;

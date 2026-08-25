@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class JobCardService {
+public class JobCardServiceCategory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

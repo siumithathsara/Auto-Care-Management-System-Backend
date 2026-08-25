@@ -125,6 +125,48 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserResponseDTO createStaffUser(UserRequestDTO userRequestDTO) {
+        log.info("Starting staff user creation for username: {}, Role: {}", userRequestDTO.getUsername(), userRequestDTO.getRole());
+
+        Role requestedRole = userRequestDTO.getRole();
+        if (requestedRole == Role.CUSTOMER || requestedRole == Role.ADMIN) {
+            throw new CustomException(400, "Only staff roles (MANAGER, ADVISOR, SUPERVISOR) can be created here.");
+        }
+
+        if (userRepository.existsByUsername(userRequestDTO.getUsername())) {
+            throw new CustomException(400, "Username " + userRequestDTO.getUsername() + " already exists");
+        }
+        if (userRepository.existsByEmail(userRequestDTO.getEmail())) {
+            throw new CustomException(400, "Email " + userRequestDTO.getEmail() + " already exists");
+        }
+
+        String prefix = switch (requestedRole) {
+            case ADVISOR -> "ADV";
+            case SUPERVISOR -> "SUP";
+            default -> "STF";
+        };
+
+        String generatedUserCode = generateUserCode(prefix);
+
+        User staffUser = new User();
+        staffUser.setUserCode(generatedUserCode);
+        staffUser.setUsername(userRequestDTO.getUsername());
+        staffUser.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
+        staffUser.setEmail(userRequestDTO.getEmail());
+        staffUser.setPhone(userRequestDTO.getPhone());
+        staffUser.setRole(requestedRole);
+        staffUser.setStatus(UserStatus.ACTIVE);
+
+        staffUser.setNicPassport(userRequestDTO.getNicPassport());
+        staffUser.setAddress(userRequestDTO.getAddress());
+
+        User savedUser = userRepository.save(staffUser);
+        log.info("Staff user created successfully with ID: {} and Role: {}", savedUser.getUserCode(), savedUser.getRole());
+
+        return mapToResponseDTO(savedUser);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public List<UserResponseDTO> getAllActiveUsers() {
         log.info("Fetching all active users");

@@ -33,6 +33,15 @@ public class UserController {
         UserResponseDTO responseDTO = userService.createAdmin(userRequestDTO);
         return new CommonResponse(201, responseDTO, "Admin created successfully!");
     }
+
+    // Call the service to create a staff user (MANAGER, ADVISOR, SUPERVISOR)
+    @PostMapping(value = "/create-staff", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public CommonResponse createStaffUser(@Valid @RequestBody UserRequestDTO userRequestDTO) {
+        UserResponseDTO responseDTO = userService.createStaffUser(userRequestDTO);
+        return new CommonResponse(201, responseDTO, "Staff user created successfully!");
+    }
+
 //  call the service to get all active users
     @GetMapping(value = "/getAllActiveUsers", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('ADMIN')")

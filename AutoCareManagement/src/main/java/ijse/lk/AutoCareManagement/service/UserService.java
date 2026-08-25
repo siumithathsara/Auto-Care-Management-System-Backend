@@ -13,6 +13,8 @@ public interface UserService {
 
     UserResponseDTO createAdmin(UserRequestDTO userRequestDTO);
 
+    UserResponseDTO createStaffUser(UserRequestDTO userRequestDTO);
+
     List<UserResponseDTO> getAllActiveUsers();
 
     UserResponseDTO getUserByUserCode(String userCode);
