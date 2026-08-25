@@ -1,5 +1,6 @@
 package ijse.lk.AutoCareManagement.entity;
 
+import ijse.lk.AutoCareManagement.enumeration.DataStatus;
 import ijse.lk.AutoCareManagement.enumeration.PartType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -41,6 +42,10 @@ public class SparePart {
     @Enumerated(EnumType.STRING)
     @Column(name = "part_type", nullable = false, length = 30)
     private PartType partType = PartType.SPARE_PART;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "data_status", nullable = false, length = 30)
+    private DataStatus dataStatus;
 
     @Column(name = "is_active", nullable = false)
     private boolean isActive = true;
