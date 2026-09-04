@@ -16,6 +16,8 @@ public interface JobCardRepository extends JpaRepository<JobCard, Long> {
 
     List<JobCard> findByStatus(JobStatus status);
 
+    boolean existsByAppointmentAppointmentCode(String appointmentCode);
+
     boolean existsByVehicleVehicleCodeAndStatusIn(String vehicleCode, List<JobStatus> statuses);
 
     @Query("SELECT COUNT(j) FROM JobCard j")

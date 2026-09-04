@@ -26,7 +26,7 @@ public class JobCardPart {
     private SparePart sparePart;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "requested_by", nullable = false)
+    @JoinColumn(name = "requested_by", referencedColumnName = "user_id", nullable = false)
     private User requestedBy;
 
     @Column(nullable = false)

@@ -73,6 +73,10 @@ public class JobCardServiceImpl implements JobCardService {
                 log.warn("Job Card creation failed: Appointment '{}' is still PENDING", dto.getAppointmentCode());
                 throw new CustomException(400, "Cannot create Job Card. Appointment is still PENDING. Please confirm it first!");
             }
+            if (appointment.getStatus() == AppointmentStatus.COMPLETED || appointment.getStatus() == AppointmentStatus.CANCELLED) {
+                log.warn("Job Card creation failed: Appointment '{}' is already {}", dto.getAppointmentCode(), appointment.getStatus());
+                throw new CustomException(400, "Cannot create Job Card. Appointment is already " + appointment.getStatus() + "!");
+            }
 
             appointment.setStatus(AppointmentStatus.IN_PROGRESS);
             appointmentRepository.save(appointment);
