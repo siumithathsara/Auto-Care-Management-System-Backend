@@ -29,8 +29,9 @@ public class JobSection {
     private JobCard jobCard;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "supervisor_id", nullable = false)
-    private User supervisor;
+    @JoinColumn(name = "assigned_by_user_id", nullable = false)
+    private User assignedByUser;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mechanic_employee_id", nullable = false)

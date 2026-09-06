@@ -4,5 +4,6 @@ public enum SectionStatus {
     PENDING,
     IN_PROGRESS,
     INSPECTED_AND_PASSED,
-    NEEDS_REWORK
+    NEEDS_REWORK,
+    COMPLETED
 }
