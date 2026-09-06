@@ -21,6 +21,9 @@ public class JobSection {
     @Column(name = "section_id")
     private long sectionId;
 
+    @Column(name = "section_code", unique = true, nullable = false, length = 50)
+    private String sectionCode;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_card_id", nullable = false)
     private JobCard jobCard;

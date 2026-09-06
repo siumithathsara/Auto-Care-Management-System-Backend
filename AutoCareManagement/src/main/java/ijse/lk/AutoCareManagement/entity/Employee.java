@@ -28,4 +28,7 @@ public class Employee {
 
     @Column(length = 20)
     private String phone;
+
+    @Column(columnDefinition = "TEXT")
+    private String address;
 }

@@ -19,6 +19,9 @@ public class InternalStockIssue {
     @Column(name = "issue_id")
     private long issueId;
 
+    @Column(name = "internal_part_code", unique = true, nullable = false, length = 50)
+    private String internalPartCode;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "part_id", nullable = false)
     private SparePart sparePart;
