@@ -31,7 +31,7 @@ public class InternalStockIssue {
     private Employee issuedToEmployee;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "issued_by_user", nullable = false)
+    @JoinColumn(name = "issued_by_user", referencedColumnName = "user_id")
     private User issuedByUser;
 
     @ManyToOne(fetch = FetchType.LAZY)
