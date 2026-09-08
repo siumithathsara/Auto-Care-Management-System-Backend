@@ -19,6 +19,9 @@ public class PurchaseOrder {
     @Column(name = "po_id")
     private long poId;
 
+    @Column(name = "po_code", unique = true, nullable = false, length = 30)
+    private String poCode;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "supplier_id", nullable = false)
     private Supplier supplier;

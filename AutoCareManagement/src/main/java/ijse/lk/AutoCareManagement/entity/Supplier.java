@@ -16,6 +16,9 @@ public class Supplier {
     @Column(name = "supplier_id")
     private long supplierId;
 
+    @Column(name = "supplier_code", unique = true, nullable = false, length = 20)
+    private String supplierCode;
+
     @Column(name = "company_name", nullable = false, length = 100)
     private String companyName;
 
