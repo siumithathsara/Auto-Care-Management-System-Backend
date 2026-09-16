@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -42,6 +44,9 @@ public class PurchaseOrder {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
     private PoStatus status;
+
+    @OneToMany(mappedBy = "purchaseOrder", cascade = CascadeType.ALL)
+    private List<PurchaseOrderItem> items = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {
