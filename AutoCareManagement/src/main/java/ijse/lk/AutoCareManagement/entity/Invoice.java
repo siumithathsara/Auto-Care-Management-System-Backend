@@ -20,12 +20,15 @@ public class Invoice {
     @Column(name = "invoice_id")
     private long invoiceId;
 
+    @Column(name = "invoice_code", unique = true, nullable = false, length = 50)
+    private String invoiceCode;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_card_id", unique = true, nullable = false)
     private JobCard jobCard;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "issued_by", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "issued_by", referencedColumnName = "user_id")
     private User issuedBy;
 
     @Column(nullable = false)
