@@ -42,7 +42,7 @@ public class User {
     private Role role;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false,length = 20)
     private UserStatus status;
 
     @Column(name = "created_at", updatable = false)
@@ -52,7 +52,7 @@ public class User {
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
         if (this.status == null) {
-            this.status = UserStatus.ACTIVE;
+            this.status = UserStatus.PENDING;
         }
     }
 

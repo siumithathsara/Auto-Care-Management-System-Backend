@@ -1,7 +1,8 @@
 package ijse.lk.AutoCareManagement.service;
 
+import java.util.Map;
+
 public interface EmailService {
 
-    void sendSimpleEmail(String toEmail, String subject, String body);
-    void sendHtmlEmail(String toEmail, String subject, String htmlBody);
+    void sendTemplateEmail(String toEmail, String subject, String templateName, Map<String, String> variables);
 }

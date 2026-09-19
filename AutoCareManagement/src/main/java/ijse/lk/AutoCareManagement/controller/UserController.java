@@ -26,6 +26,13 @@ public class UserController {
         UserResponseDTO userResponseDTO = userService.registerCustomer(userDTO);
         return new CommonResponse(201, userResponseDTO,"Customer registered successfully");
     }
+//   get all pending customers to activate
+    @PatchMapping(value = "/activate-customer/{userCode}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    public CommonResponse activateCustomer(@PathVariable String userCode) {
+        UserResponseDTO userResponseDTO = userService.activateCustomer(userCode);
+        return new CommonResponse(200, userResponseDTO, "Customer account activated successfully!");
+    }
 // Call the service to register the admin
     @PostMapping(value = "/create-admin", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('ADMIN')")

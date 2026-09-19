@@ -3,5 +3,8 @@ package ijse.lk.AutoCareManagement.enumeration;
 public enum UserStatus {
 
     ACTIVE,
-    INACTIVE
+    INACTIVE,
+    PENDING,
+    APPROVED,
+    CONFIRMED
 }

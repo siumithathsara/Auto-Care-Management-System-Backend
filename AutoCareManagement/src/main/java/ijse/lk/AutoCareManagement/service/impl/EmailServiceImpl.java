@@ -1,59 +1,60 @@
 package ijse.lk.AutoCareManagement.service.impl;
 
 import ijse.lk.AutoCareManagement.service.EmailService;
-import jakarta.mail.MessagingException;
+
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.mail.SimpleMailMessage;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StreamUtils;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class EmailServiceImpl implements EmailService {
     private final JavaMailSender mailSender;
+    private final ResourceLoader resourceLoader;
 
     @Value("${spring.mail.username}")
-    private String senderEmail;
+    private String adminEmail;
 
     @Override
     @Async
-    public void sendSimpleEmail(String toEmail, String subject, String body) {
+    public void sendTemplateEmail(String toEmail, String subject, String templateName, Map<String, String> variables) {
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(senderEmail);
-            message.setTo(toEmail);
-            message.setSubject(subject);
-            message.setText(body);
 
-            mailSender.send(message);
-            log.info("Simple email sent successfully to: {}", toEmail);
-        } catch (Exception e) {
-            log.error("Failed to send simple email to {}: {}", toEmail, e.getMessage());
-        }
-    }
+            Resource resource = resourceLoader.getResource("classpath:templates/" + templateName + ".html");
+            String htmlContent = StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);
 
-    @Override
-    @Async
-    public void sendHtmlEmail(String toEmail, String subject, String htmlBody) {
-        try {
+            if (variables != null) {
+                for (Map.Entry<String, String> entry : variables.entrySet()) {
+                    String value = entry.getValue() != null ? entry.getValue() : "";
+                    htmlContent = htmlContent.replace("{{" + entry.getKey() + "}}", value);
+                }
+            }
+
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
 
-            helper.setFrom(senderEmail);
+            helper.setFrom(adminEmail);
             helper.setTo(toEmail);
             helper.setSubject(subject);
-            helper.setText(htmlBody, true);
+            helper.setText(htmlContent, true);
 
             mailSender.send(mimeMessage);
-            log.info("HTML email sent successfully to: {}", toEmail);
-        } catch (MessagingException e) {
-            log.error("Failed to send HTML email to {}: {}", toEmail, e.getMessage());
+            log.info("Template email [{}] sent successfully to: {}", templateName, toEmail);
+
+        } catch (Exception e) {
+            log.error("Failed to send template email [{}] to {}: {}", templateName, toEmail, e.getMessage());
         }
     }
 }

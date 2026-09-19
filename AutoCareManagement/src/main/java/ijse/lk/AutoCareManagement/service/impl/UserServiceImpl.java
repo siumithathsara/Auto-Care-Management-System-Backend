@@ -7,6 +7,7 @@ import ijse.lk.AutoCareManagement.enumeration.Role;
 import ijse.lk.AutoCareManagement.enumeration.UserStatus;
 import ijse.lk.AutoCareManagement.exception.CustomException;
 import ijse.lk.AutoCareManagement.repository.UserRepository;
+import ijse.lk.AutoCareManagement.service.EmailService;
 import ijse.lk.AutoCareManagement.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,9 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Year;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -26,6 +25,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
     @Override
     public UserResponseDTO getUserDetails(String username, String password) {
@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
         customer.setEmail(userRequestDTO.getEmail());
         customer.setPhone(userRequestDTO.getPhone());
         customer.setRole(Role.CUSTOMER);
-        customer.setStatus(UserStatus.ACTIVE);
+        customer.setStatus(UserStatus.PENDING);
 
 
         customer.setNicPassport(userRequestDTO.getNicPassport());
@@ -89,6 +89,9 @@ public class UserServiceImpl implements UserService {
 
         User savedCustomer = userRepository.save(customer);
         log.info("Customer registered successfully with user ID: {}", savedCustomer.getUserId());
+
+        sendAdminRegistrationAlertEmail(savedCustomer);
+
         return mapToResponseDTO(savedCustomer);
     }
 
@@ -288,6 +291,27 @@ public class UserServiceImpl implements UserService {
         return userRepository.getAllUserCount();
     }
 
+    @Override
+    @Transactional
+    public UserResponseDTO activateCustomer(String userCode) {
+        log.info("Activating customer account with code: {}", userCode);
+
+        Optional<User> optionalCustomer = userRepository.findByUserCode(userCode);
+
+        if (optionalCustomer.isPresent()) {
+            User customer = optionalCustomer.get();
+            customer.setStatus(UserStatus.ACTIVE);
+            User updatedCustomer = userRepository.save(customer);
+            log.info("Customer account activated successfully for user ID: {}", updatedCustomer.getUserId());
+
+            sendCustomerAccountActivatedEmail(updatedCustomer);
+
+            return mapToResponseDTO(updatedCustomer);
+        } else {
+            throw new CustomException(404, "Customer not found with code: " + userCode);
+        }
+    }
+
     private String generateUserCode(String priffix) {
         log.debug("Generating user code with prefix: {}", priffix);
         long currentCount = userRepository.getAllUserCount();
@@ -319,5 +343,25 @@ public class UserServiceImpl implements UserService {
         return dto;
     }
 
+    private void sendAdminRegistrationAlertEmail(User customer) {
+        String subject = "New Customer Registration Pending - " + customer.getUserCode();
 
+        Map<String, String> variables = new HashMap<>();
+        variables.put("userCode", customer.getUserCode());
+        variables.put("username", customer.getUsername());
+        variables.put("email", customer.getEmail());
+        variables.put("phone", customer.getPhone());
+        variables.put("nicPassport", customer.getNicPassport());
+
+        emailService.sendTemplateEmail("autocare.service.official@gmail.com", subject, "admin-registration-alert", variables);
+    }
+
+    private void sendCustomerAccountActivatedEmail(User customer) {
+        String subject = "Account Approved & Activated - Welcome to AutoCare!";
+
+        Map<String, String> variables = new HashMap<>();
+        variables.put("username", customer.getUsername());
+
+        emailService.sendTemplateEmail(customer.getEmail(), subject, "customer-account-activated", variables);
+    }
 }

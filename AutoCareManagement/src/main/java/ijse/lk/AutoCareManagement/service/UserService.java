@@ -29,5 +29,7 @@ public interface UserService {
 
     long getTotalUsersCount();
 
+    UserResponseDTO activateCustomer(String userCode);
+
 
 }
