@@ -25,4 +25,9 @@ public interface SparePartRepository extends JpaRepository<SparePart, Long> {
 
     @Query("SELECT s FROM SparePart s WHERE s.quantityInStock <= s.reorderLevel AND s.isActive = true")
     List<SparePart> findLowStockParts(DataStatus dataStatus);
+
+    Long countByQuantityInStockLessThanEqual(Integer quantity);
+
+    @Query("SELECT COUNT(s) FROM SparePart s WHERE s.quantityInStock <= s.reorderLevel AND s.quantityInStock > 0")
+    Long countLowStockItems();
 }

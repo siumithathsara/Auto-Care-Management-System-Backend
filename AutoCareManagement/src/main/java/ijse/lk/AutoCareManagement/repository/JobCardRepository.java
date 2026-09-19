@@ -22,4 +22,8 @@ public interface JobCardRepository extends JpaRepository<JobCard, Long> {
 
     @Query("SELECT COUNT(j) FROM JobCard j")
     long getJobCardCount();
+
+    Long countByStatus(JobStatus status);
+
+    Long countByStatusIn(List<JobStatus> statuses);
 }
