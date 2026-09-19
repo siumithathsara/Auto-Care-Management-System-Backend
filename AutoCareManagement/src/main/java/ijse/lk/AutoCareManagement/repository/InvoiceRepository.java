@@ -4,6 +4,7 @@ import ijse.lk.AutoCareManagement.entity.Invoice;
 import ijse.lk.AutoCareManagement.enumeration.PaymentStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,4 +35,12 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
 
     @Query("SELECT COALESCE(SUM(i.balanceAmount), 0) FROM Invoice i WHERE i.paymentStatus = 'UNPAID' OR i.paymentStatus = 'PARTIALLY_PAID'")
     Double getTotalUnpaidAmount();
+
+    @Query("SELECT SUM(i.balanceAmount) FROM Invoice i " +
+            "WHERE i.jobCard.vehicle.customer.userCode = :customerCode " +
+            "AND i.paymentStatus = :status")
+    Double findTotalPendingPaymentByCustomerCode(
+            @Param("customerCode") String customerCode,
+            @Param("status") PaymentStatus status
+    );
 }
