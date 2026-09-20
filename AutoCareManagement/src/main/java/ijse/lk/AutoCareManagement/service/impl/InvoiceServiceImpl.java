@@ -9,7 +9,9 @@ import ijse.lk.AutoCareManagement.exception.CustomException;
 import ijse.lk.AutoCareManagement.repository.InvoiceRepository;
 import ijse.lk.AutoCareManagement.repository.JobCardRepository;
 import ijse.lk.AutoCareManagement.repository.UserRepository;
+import ijse.lk.AutoCareManagement.service.EmailService;
 import ijse.lk.AutoCareManagement.service.InvoiceService;
+import ijse.lk.AutoCareManagement.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,9 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.Year;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +32,9 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final InvoiceRepository invoiceRepository;
     private final JobCardRepository jobCardRepository;
     private final UserRepository userRepository;
+
+    private final ReportService reportService;
+    private final EmailService emailService;
 
     @Override
     public InvoiceResponseDTO createInvoice(InvoiceRequestDTO dto, String username) {
@@ -110,6 +114,11 @@ public class InvoiceServiceImpl implements InvoiceService {
         jobCardRepository.save(jobCard);
 
         log.info("Invoice created successfully with code: {}", invoiceCode);
+
+        if (savedInvoice.getPaymentStatus() == PaymentStatus.PAID) {
+            sendCustomerInvoiceEmailHelper(savedInvoice, jobCard);
+        }
+
         return mapToResponseDTO(savedInvoice);
     }
 
@@ -229,5 +238,48 @@ public class InvoiceServiceImpl implements InvoiceService {
         dto.setIssuedDate(invoice.getIssuedDate());
 
         return dto;
+    }
+
+    private void sendCustomerInvoiceEmailHelper(Invoice invoice, JobCard jobCard) {
+        if (jobCard.getVehicle() == null || jobCard.getVehicle().getCustomer() == null) return;
+
+        User customer = jobCard.getVehicle().getCustomer();
+        if (customer.getEmail() == null || customer.getEmail().isBlank()) return;
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+        // 1. Email HTML Template එකට යන Data Map එක
+        Map<String, Object> templateVars = new HashMap<>();
+        templateVars.put("customerName",  customer.getUsername());
+        templateVars.put("invoiceCode", invoice.getInvoiceCode());
+        templateVars.put("licensePlate", jobCard.getVehicle().getLicensePlate());
+        templateVars.put("totalAmount", String.format("%.2f", invoice.getTotalAmount()));
+
+        // 2. Jasper JRXML එකට යන Parameters Map එක
+        Map<String, Object> jasperParams = new HashMap<>();
+        jasperParams.put("invoiceCode", invoice.getInvoiceCode());
+        jasperParams.put("customerName", customer.getUsername());
+        jasperParams.put("licensePlate", jobCard.getVehicle().getLicensePlate());
+        jasperParams.put("vehicleInfo", jobCard.getVehicle().getBrand() + " " + jobCard.getVehicle().getModel());
+        jasperParams.put("subtotal", invoice.getSubtotal());
+        jasperParams.put("taxAmount", invoice.getTaxAmount());
+        jasperParams.put("discount", invoice.getDiscount());
+        jasperParams.put("totalAmount", invoice.getTotalAmount());
+        jasperParams.put("paidAmount", invoice.getPaidAmount());
+        jasperParams.put("balanceAmount", invoice.getBalanceAmount());
+        jasperParams.put("issuedDate", invoice.getIssuedDate() != null ? invoice.getIssuedDate().format(formatter) : LocalDateTime.now().format(formatter));
+
+        // 3. ඔයා හදපු ReportService එකෙන් Memory එකේ PDF Bytes එක හදාගැනීම
+        byte[] pdfBytes = reportService.generateInvoicePdfByte(jasperParams);
+
+        // 4. EmailService හරහා PDF Attachment එකත් එක්ක Email එක යැවීම
+        emailService.sendInvoiceEmailWithPdf(
+                customer.getEmail(),
+                "Payment Receipt - " + invoice.getInvoiceCode(),
+                "invoice-customer", // resources/templates/invoice-customer.html
+                templateVars,
+                pdfBytes,
+                "Invoice_" + invoice.getInvoiceCode() + ".pdf"
+        );
     }
 }
