@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f0f7; margin: 0; padding: 30px 10px; }
+        .card { background-color: #ffffff; border-radius: 12px; padding: 30px; max-width: 600px; margin: 0 auto; box-shadow: 0 8px 20px rgba(0, 123, 255, 0.1); border: 1px solid #e1e8f0; }
+        .header { background: linear-gradient(135deg, #0052D4 0%, #4364F7 50%, #6FB1FC 100%); color: #ffffff; padding: 22px; border-radius: 10px; text-align: center; margin-bottom: 25px; }
+        .header h2 { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: 0.5px; }
+        p { color: #3A4756; font-size: 15px; line-height: 1.6; }
+        .details { margin: 25px 0; width: 100%; border-collapse: collapse; background-color: #f7f9fc; border-radius: 8px; overflow: hidden; }
+        .details td { padding: 12px 16px; border-bottom: 1px solid #e9eff8; font-size: 14px; }
+        .details td.label { font-weight: 600; color: #1E3A8A; width: 40%; }
+        .details tr:last-child td { border-bottom: none; }
+        .badge { background-color: #E0E7FF; color: #1E40AF; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 13px; }
+        .status-box { background-color: #EEF2FF; border-left: 4px solid #4364F7; padding: 12px 15px; border-radius: 0 6px 6px 0; margin-bottom: 20px; font-size: 14px; color: #1E3A8A; }
+        .footer { text-align: center; font-size: 12px; color: #8A99AD; margin-top: 30px; border-top: 1px solid #EAEFF5; padding-top: 15px; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div class="header">
+        <h2>Appointment Confirmed! ✨</h2>
+    </div>
+    <p>Dear <span>{{customerName}}</span>,</p>
+
+    <div class="status-box">
+        Great news! Your service appointment has been <strong>APPROVED</strong> and scheduled.
+    </div>
+
+    <table class="details">
+        <tr><td class="label">Appointment Code:</td><td><span class="badge">{{appointmentCode}}</span></td></tr>
+        <tr><td class="label">Vehicle Plate:</td><td>{{licensePlate}}</td></tr>
+        <tr><td class="label">Date:</td><td>{{appointmentDate}}</td></tr>
+        <tr><td class="label">Time:</td><td>{{appointmentTime}}</td></tr>
+        <tr><td class="label">Estimated Fee:</td><td style="color: #1E40AF; font-weight: bold;">LKR {{estimatedTotalFee}}</td></tr>
+    </table>
+
+    <p style="font-size: 13px; color: #64748B;">* Please ensure you arrive 10-15 minutes prior to your scheduled time.</p>
+    <div class="footer">Thank you for choosing AutoCare Services!</div>
+</div>
+</body>
+</html>

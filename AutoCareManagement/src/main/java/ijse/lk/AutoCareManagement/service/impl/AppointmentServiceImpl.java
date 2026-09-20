@@ -16,15 +16,14 @@ import ijse.lk.AutoCareManagement.repository.ServiceRepository;
 import ijse.lk.AutoCareManagement.repository.UserRepository;
 import ijse.lk.AutoCareManagement.repository.VehicleRepository;
 import ijse.lk.AutoCareManagement.service.AppointmentService;
+import ijse.lk.AutoCareManagement.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Year;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +35,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final UserRepository userRepository;
     private final VehicleRepository vehicleRepository;
     private final ServiceRepository serviceRepository;
+    private final EmailService emailService;
 
     @Override
     public AppointmentResponseDTO createAppointment(AppointmentRequestDTO dto) {
@@ -93,6 +93,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 
         Appointment savedAppointment = appointmentRepository.save(appointment);
         log.info("Appointment created successfully with code: {}", appointmentCode);
+
+        sendAdminAppointmentAlertEmail(savedAppointment);
 
         return mapToResponseDTO(savedAppointment);
     }
@@ -158,9 +160,16 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
 
         Appointment appointment = appointmentOptional.get();
+        AppointmentStatus oldStatus = appointment.getStatus();
+
         appointment.setStatus(newStatus);
         Appointment updated = appointmentRepository.save(appointment);
         log.info("Appointment status updated successfully to {} for code: {}", newStatus, appointmentCode);
+
+        if ((newStatus == AppointmentStatus.CONFIRMED || newStatus.name().equals("APPROVED")) && oldStatus != newStatus) {
+            sendCustomerAppointmentApprovedEmail(updated);
+        }
+
         return mapToResponseDTO(updated);
     }
 
@@ -299,5 +308,43 @@ public class AppointmentServiceImpl implements AppointmentService {
 
         dto.setSelectedServices(serviceDTOs);
         return dto;
+    }
+
+    private void sendAdminAppointmentAlertEmail(Appointment appointment) {
+        try {
+            String subject = "New Appointment Alert - " + appointment.getAppointmentCode();
+
+            Map<String, String> variables = new HashMap<>();
+            variables.put("appointmentCode", appointment.getAppointmentCode());
+            variables.put("customerName", appointment.getCustomer().getUsername());
+            variables.put("customerPhone", appointment.getCustomer().getPhone());
+            variables.put("licensePlate", appointment.getVehicle().getLicensePlate());
+            variables.put("appointmentDate", appointment.getAppointmentDate().toString());
+            variables.put("appointmentTime", appointment.getAppointmentTime().toString());
+            variables.put("estimatedTotalFee", String.valueOf(appointment.getEstimatedTotalFee()));
+            variables.put("specialNotes", appointment.getSpecialNotes() != null ? appointment.getSpecialNotes() : "None");
+
+            emailService.sendTemplateEmail("autocare.service.official@gmail.com", subject, "new-appointment-admin-alert", variables);
+        } catch (Exception e) {
+            log.error("Failed to send admin appointment alert email: {}", e.getMessage());
+        }
+    }
+
+    private void sendCustomerAppointmentApprovedEmail(Appointment appointment) {
+        try {
+            String subject = "Appointment Approved - " + appointment.getAppointmentCode();
+
+            Map<String, String> variables = new HashMap<>();
+            variables.put("customerName", appointment.getCustomer().getUsername());
+            variables.put("appointmentCode", appointment.getAppointmentCode());
+            variables.put("licensePlate", appointment.getVehicle().getLicensePlate());
+            variables.put("appointmentDate", appointment.getAppointmentDate().toString());
+            variables.put("appointmentTime", appointment.getAppointmentTime().toString());
+            variables.put("estimatedTotalFee", String.valueOf(appointment.getEstimatedTotalFee()));
+
+            emailService.sendTemplateEmail(appointment.getCustomer().getEmail(), subject, "appointment-approved-customer", variables);
+        } catch (Exception e) {
+            log.error("Failed to send customer approval email: {}", e.getMessage());
+        }
     }
 }

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f0f7; margin: 0; padding: 30px 10px; }
+        .card { background-color: #ffffff; border-radius: 12px; padding: 30px; max-width: 600px; margin: 0 auto; box-shadow: 0 8px 20px rgba(106, 90, 205, 0.1); border: 1px solid #e6e1f0; }
+        .header { background: linear-gradient(135deg, #4A00E0 0%, #8E2DE2 100%); color: #ffffff; padding: 20px; border-radius: 10px; text-align: center; margin-bottom: 25px; }
+        .header h2 { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: 0.5px; }
+        p { color: #4A4A68; font-size: 15px; line-height: 1.6; }
+        .details { margin: 25px 0; width: 100%; border-collapse: collapse; background-color: #fdfbfd; border-radius: 8px; overflow: hidden; }
+        .details td { padding: 12px 16px; border-bottom: 1px solid #f0eaf7; font-size: 14px; }
+        .details td.label { font-weight: 600; color: #413B6B; width: 40%; }
+        .details tr:last-child td { border-bottom: none; }
+        .badge { background-color: #E8E3F5; color: #5B4296; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 13px; }
+        .footer { text-align: center; font-size: 12px; color: #8C89A0; margin-top: 30px; border-top: 1px solid #EBE7F3; padding-top: 15px; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div class="header">
+        <h2>New Appointment Request 🚗</h2>
+    </div>
+    <p>Hello Admin,</p>
+    <p>A new appointment has been scheduled by a customer. Please review the details below:</p>
+
+    <table class="details">
+        <tr><td class="label">Appointment Code:</td><td><span class="badge">{{appointmentCode}}</span></td></tr>
+        <tr><td class="label">Customer Name:</td><td>{{customerName}}</td></tr>
+        <tr><td class="label">Customer Phone:</td><td>{{customerPhone}}</td></tr>
+        <tr><td class="label">Vehicle Plate:</td><td>{{licensePlate}}</td></tr>
+        <tr><td class="label">Scheduled Date:</td><td>{{appointmentDate}}</td></tr>
+        <tr><td class="label">Scheduled Time:</td><td>{{appointmentTime}}</td></tr>
+        <tr><td class="label">Estimated Fee:</td><td style="color: #2D006B; font-weight: bold;">LKR {{estimatedTotalFee}}</td></tr>
+        <tr><td class="label">Special Notes:</td><td>{{specialNotes}}</td></tr>
+    </table>
+
+    <p>Log in to the AutoCare Admin Dashboard to process or approve this booking.</p>
+    <div class="footer">AutoCare Management System • Automated Notification</div>
+</div>
+</body>
+</html>
