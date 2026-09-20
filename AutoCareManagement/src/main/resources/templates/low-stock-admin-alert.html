@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fff5f5; margin: 0; padding: 30px 10px; }
+        .card { background-color: #ffffff; border-radius: 12px; padding: 30px; max-width: 600px; margin: 0 auto; box-shadow: 0 8px 20px rgba(220, 38, 38, 0.1); border: 1px solid #fee2e2; }
+        .header { background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); color: #ffffff; padding: 20px; border-radius: 10px; text-align: center; margin-bottom: 25px; }
+        .header h2 { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: 0.5px; }
+        p { color: #4b5563; font-size: 15px; line-height: 1.6; }
+        .details { margin: 25px 0; width: 100%; border-collapse: collapse; background-color: #fef2f2; border-radius: 8px; overflow: hidden; }
+        .details td { padding: 12px 16px; border-bottom: 1px solid #fecaca; font-size: 14px; }
+        .details td.label { font-weight: 600; color: #991b1b; width: 40%; }
+        .details tr:last-child td { border-bottom: none; }
+        .badge-warning { background-color: #fef3c7; color: #b45309; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 13px; }
+        .badge-danger { background-color: #fee2e2; color: #991b1b; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 13px; }
+        .footer { text-align: center; font-size: 12px; color: #9ca3af; margin-top: 30px; border-top: 1px solid #f3f4f6; padding-top: 15px; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div class="header">
+        <h2>⚠️ Low Stock Alert!</h2>
+    </div>
+    <p>Hello Admin,</p>
+    <p>A spare part item in inventory has reached or fallen below its configured reorder level. Please consider restocking soon.</p>
+
+    <table class="details">
+        <tr><td class="label">Part Code:</td><td><span class="badge-danger">{{partCode}}</span></td></tr>
+        <tr><td class="label">Part Name:</td><td><strong>{{partName}}</strong></td></tr>
+        <tr><td class="label">Brand:</td><td>{{brand}}</td></tr>
+        <tr><td class="label">Part Type:</td><td>{{partType}}</td></tr>
+        <tr><td class="label">Current Stock:</td><td><span class="badge-danger">{{quantityInStock}}</span></td></tr>
+        <tr><td class="label">Reorder Level:</td><td><span class="badge-warning">{{reorderLevel}}</span></td></tr>
+        <tr><td class="label">Unit Price:</td><td>LKR {{unitPrice}}</td></tr>
+    </table>
+
+    <p>Log in to the AutoCare Admin Panel to review stock levels and issue purchase orders.</p>
+    <div class="footer">AutoCare Management System • Inventory Notification System</div>
+</div>
+</body>
+</html>

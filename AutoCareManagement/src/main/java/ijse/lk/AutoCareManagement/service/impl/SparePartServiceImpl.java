@@ -6,15 +6,14 @@ import ijse.lk.AutoCareManagement.entity.SparePart;
 import ijse.lk.AutoCareManagement.enumeration.DataStatus;
 import ijse.lk.AutoCareManagement.exception.CustomException;
 import ijse.lk.AutoCareManagement.repository.SparePartRepository;
+import ijse.lk.AutoCareManagement.service.EmailService;
 import ijse.lk.AutoCareManagement.service.SparePartService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +22,8 @@ import java.util.Optional;
 public class SparePartServiceImpl implements SparePartService {
 
     private final SparePartRepository sparePartRepository;
+    private final EmailService emailService;
+
     @Override
     public SparePartResponseDTO saveSparePart(SparePartRequestDTO dto) {
         log.info("Registering new spare part: {}", dto.getPartName());
@@ -47,6 +48,8 @@ public class SparePartServiceImpl implements SparePartService {
 
         SparePart savedPart = sparePartRepository.save(sparePart);
         log.info("Spare part successfully registered with code: {}", generatedPartCode);
+
+        checkAndSendLowStockAlertEmail(savedPart);
 
         return mapToResponseDTO(savedPart);
     }
@@ -128,6 +131,8 @@ public class SparePartServiceImpl implements SparePartService {
         SparePart updatedPart = sparePartRepository.save(sparePart);
         log.info("Spare part with code '{}' successfully updated", partCode);
 
+        checkAndSendLowStockAlertEmail(updatedPart);
+
         return mapToResponseDTO(updatedPart);
     }
 
@@ -176,5 +181,28 @@ public class SparePartServiceImpl implements SparePartService {
         dto.setPartType(sparePart.getPartType());
         dto.setDataStatus(sparePart.getDataStatus());
         return dto;
+    }
+    private void checkAndSendLowStockAlertEmail(SparePart sparePart) {
+        if (sparePart.getQuantityInStock() <= sparePart.getReorderLevel()) {
+            log.warn("Low stock detected for item: {} (Code: {}). Current: {}, Reorder Level: {}",
+                    sparePart.getPartName(), sparePart.getPartCode(), sparePart.getQuantityInStock(), sparePart.getReorderLevel());
+
+            try {
+                String subject = " Low Stock Alert - " + sparePart.getPartCode() + " (" + sparePart.getPartName() + ")";
+
+                Map<String, String> variables = new HashMap<>();
+                variables.put("partCode", sparePart.getPartCode());
+                variables.put("partName", sparePart.getPartName());
+                variables.put("brand", sparePart.getBrand() != null ? sparePart.getBrand() : "N/A");
+                variables.put("partType", sparePart.getPartType() != null ? sparePart.getPartType().name() : "N/A");
+                variables.put("quantityInStock", String.valueOf(sparePart.getQuantityInStock()));
+                variables.put("reorderLevel", String.valueOf(sparePart.getReorderLevel()));
+                variables.put("unitPrice", String.format("%.2f", sparePart.getUnitPrice()));
+
+                emailService.sendTemplateEmail("autocare.service.official@gmail.com", subject, "low-stock-admin-alert", variables);
+            } catch (Exception e) {
+                log.error("Failed to send low stock alert email for part code: {}: {}", sparePart.getPartCode(), e.getMessage());
+            }
+        }
     }
 }
