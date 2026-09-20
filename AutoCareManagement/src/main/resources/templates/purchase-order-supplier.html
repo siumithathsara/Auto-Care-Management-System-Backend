@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; margin: 0; padding: 30px 10px; }
+        .card { background-color: #ffffff; border-radius: 12px; padding: 35px; max-width: 650px; margin: 0 auto; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08); border: 1px solid #e5e7eb; }
+        .header { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); color: #ffffff; padding: 25px; border-radius: 10px; text-align: center; margin-bottom: 25px; }
+        .header h2 { margin: 0; font-size: 24px; font-weight: 700; letter-spacing: 0.5px; }
+        .header p { margin: 5px 0 0 0; opacity: 0.9; font-size: 14px; }
+        p { color: #374151; font-size: 15px; line-height: 1.6; }
+        .info-table { width: 100%; border-collapse: collapse; margin-bottom: 25px; background-color: #f8fafc; border-radius: 8px; overflow: hidden; }
+        .info-table td { padding: 12px 16px; font-size: 14px; border-bottom: 1px solid #e2e8f0; }
+        .info-table td.label { font-weight: 600; color: #1e293b; width: 40%; }
+
+        .items-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
+        .items-table th { background-color: #1e3a8a; color: #ffffff; text-align: left; padding: 12px; font-weight: 600; }
+        .items-table td { padding: 12px; border-bottom: 1px solid #e5e7eb; color: #374151; }
+        .items-table tr:nth-child(even) { background-color: #f9fafb; }
+
+        .total-box { background-color: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 15px 20px; text-align: right; margin-top: 20px; }
+        .total-box .amount { font-size: 20px; font-weight: bold; color: #1e40af; }
+
+        .badge { background-color: #dbeafe; color: #1e40af; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 13px; }
+        .footer { text-align: center; font-size: 12px; color: #9ca3af; margin-top: 30px; border-top: 1px solid #f3f4f6; padding-top: 20px; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div class="header">
+        <h2>🛍️ New Purchase Order Received</h2>
+        <p>AutoCare Management System</p>
+    </div>
+
+    <p>Dear <strong>{{supplierName}}</strong>,</p>
+    <p>We are pleased to place a new Purchase Order with your company. Please find the details of the requested items below:</p>
+
+    <table class="info-table">
+        <tr><td class="label">PO Reference Code:</td><td><span class="badge">{{poCode}}</span></td></tr>
+        <tr><td class="label">Order Date:</td><td>{{orderDate}}</td></tr>
+        <tr><td class="label">Expected Delivery Date:</td><td><strong>{{expectedDeliveryDate}}</strong></td></tr>
+        <tr><td class="label">Created By:</td><td>{{createdByName}}</td></tr>
+    </table>
+
+    <h3 style="color: #1e3a8a; font-size: 16px; margin-bottom: 10px;">Order Items Breakdown:</h3>
+    <table class="items-table">
+        <thead>
+        <tr>
+            <th>Item / Part Name</th>
+            <th style="text-align: center;">Qty</th>
+            <th style="text-align: right;">Unit Cost</th>
+            <th style="text-align: right;">Sub Total</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{itemsTableRows}}
+        </tbody>
+    </table>
+
+    <div class="total-box">
+        <span style="font-size: 14px; color: #4b5563;">Total Order Amount: </span>
+        <span class="amount">LKR {{totalAmount}}</span>
+    </div>
+
+    <p style="margin-top: 25px;">Please confirm the receipt of this order and let us know if there are any updates regarding delivery timelines.</p>
+
+    <div class="footer">
+        Thank you for your partnership.<br>
+        <strong>AutoCare Service Center</strong> • Purchase & Inventory Department
+    </div>
+</div>
+</body>
+</html>

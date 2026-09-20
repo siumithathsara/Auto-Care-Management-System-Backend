@@ -18,4 +18,6 @@ public interface SparePartService {
     SparePartResponseDTO updateSparePart(String partCode, SparePartRequestDTO dto);
 
     void deleteSparePart(String partCode);
+
+    SparePartResponseDTO deductStock(String partCode, int quantityToDeduct);
 }

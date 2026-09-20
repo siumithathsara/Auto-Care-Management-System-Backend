@@ -8,6 +8,7 @@ import ijse.lk.AutoCareManagement.entity.*;
 import ijse.lk.AutoCareManagement.enumeration.PoStatus;
 import ijse.lk.AutoCareManagement.enumeration.Role;
 import ijse.lk.AutoCareManagement.exception.CustomException;
+import ijse.lk.AutoCareManagement.service.EmailService;
 import ijse.lk.AutoCareManagement.service.PurchaseOrderService;
 import ijse.lk.AutoCareManagement.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Year;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +31,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     private final SupplierRepository supplierRepository;
     private final UserRepository userRepository;
     private final SparePartRepository sparePartRepository;
+    private final EmailService emailService;
 
     @Override
     public PurchaseOrderResponseDTO createPurchaseOrder(PurchaseOrderRequestDTO dto, String username) {
@@ -97,6 +98,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         List<PurchaseOrderItem> savedItems = poItemRepository.saveAll(itemList);
 
         log.info("Purchase order successfully created with code: {}", generatedPoCode);
+
+        sendPurchaseOrderEmailToSupplier(savedPo, savedItems);
 
         return mapToResponseDTO(savedPo, savedItems);
     }
@@ -235,5 +238,44 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         dto.setItems(itemDTOs);
 
         return dto;
+    }
+
+    private void sendPurchaseOrderEmailToSupplier(PurchaseOrder po, List<PurchaseOrderItem> items) {
+        Supplier supplier = po.getSupplier();
+        if (supplier == null || supplier.getEmail() == null || supplier.getEmail().isBlank()) {
+            log.warn("Skipping PO email: Supplier email is missing for PO Code: {}", po.getPoCode());
+            return;
+        }
+
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+            StringBuilder tableRows = new StringBuilder();
+            for (PurchaseOrderItem item : items) {
+                tableRows.append("<tr>")
+                        .append("<td>").append(item.getSparePart().getPartName()).append(" (").append(item.getSparePart().getPartCode()).append(")</td>")
+                        .append("<td style=\"text-align: center;\">").append(item.getOrderedQty()).append("</td>")
+                        .append("<td style=\"text-align: right;\">LKR ").append(String.format("%.2f", item.getUnitCost())).append("</td>")
+                        .append("<td style=\"text-align: right;\">LKR ").append(String.format("%.2f", item.getSubTotal())).append("</td>")
+                        .append("</tr>");
+            }
+
+            String subject = "🛍️ New Purchase Order - " + po.getPoCode() + " | AutoCare Management";
+
+            Map<String, String> variables = new HashMap<>();
+            variables.put("supplierName", supplier.getCompanyName() != null ? supplier.getCompanyName() : supplier.getCompanyName());
+            variables.put("poCode", po.getPoCode());
+            variables.put("orderDate", po.getOrderDate() != null ? po.getOrderDate().format(formatter) : "N/A");
+            variables.put("expectedDeliveryDate", po.getExpectedDeliveryDate() != null ? po.getExpectedDeliveryDate().format(formatter) : "As soon as possible");
+            variables.put("createdByName", po.getCreatedBy() != null ? po.getCreatedBy().getUsername() : "Admin");
+            variables.put("totalAmount", String.format("%.2f", po.getTotalAmount()));
+            variables.put("itemsTableRows", tableRows.toString());
+
+            emailService.sendTemplateEmail(supplier.getEmail(), subject, "purchase-order-supplier", variables);
+            log.info("Purchase Order email sent successfully to supplier: {} ({})", supplier.getEmail(), po.getPoCode());
+
+        } catch (Exception e) {
+            log.error("Failed to send Purchase Order email to supplier for PO: {}: {}", po.getPoCode(), e.getMessage());
+        }
     }
 }

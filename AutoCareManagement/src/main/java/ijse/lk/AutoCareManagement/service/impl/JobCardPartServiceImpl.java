@@ -8,6 +8,7 @@ import ijse.lk.AutoCareManagement.exception.CustomException;
 import ijse.lk.AutoCareManagement.repository.JobCardPartRepository;
 import ijse.lk.AutoCareManagement.repository.SparePartRepository;
 import ijse.lk.AutoCareManagement.service.JobCardPartService;
+import ijse.lk.AutoCareManagement.service.SparePartService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ public class JobCardPartServiceImpl implements JobCardPartService {
 
     private final JobCardPartRepository jobCardPartRepository;
     private final SparePartRepository sparePartRepository;
+    private SparePartService sparePartService;
 
     @Override
     public JobCardPartResponseDTO issueJobCardPart(Long jobCardPartId) {
@@ -56,6 +58,7 @@ public class JobCardPartServiceImpl implements JobCardPartService {
         sparePart.setQuantityInStock(updatedStock);
         sparePartRepository.save(sparePart);
 
+        sparePartService.deductStock(sparePart.getPartCode(), jobCardPart.getQuantity());
         jobCardPart.setIssueStatus(IssueStatus.ISSUED);
         JobCardPart updatedPart = jobCardPartRepository.save(jobCardPart);
 

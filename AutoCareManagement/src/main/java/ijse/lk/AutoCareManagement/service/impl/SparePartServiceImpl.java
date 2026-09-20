@@ -153,6 +153,33 @@ public class SparePartServiceImpl implements SparePartService {
         log.info("Spare part successfully marked as inactive for code: {}", partCode);
     }
 
+    @Override
+    public SparePartResponseDTO deductStock(String partCode, int quantityToDeduct) {
+        log.info("Deducting stock for part code: {} by quantity: {}", partCode, quantityToDeduct);
+
+        Optional<SparePart> partOptional = sparePartRepository.findByPartCodeAndDataStatus(partCode, DataStatus.ACTIVE);
+        if (partOptional.isEmpty()) {
+            throw new CustomException(404, "Spare Part not found with code: " + partCode);
+        }
+
+        SparePart sparePart = partOptional.get();
+
+        if (sparePart.getQuantityInStock() < quantityToDeduct) {
+            throw new CustomException(400, "Insufficient stock for part: " + sparePart.getPartName() +
+                    ". Available: " + sparePart.getQuantityInStock() + ", Requested: " + quantityToDeduct);
+        }
+
+        int newQuantity = sparePart.getQuantityInStock() - quantityToDeduct;
+        sparePart.setQuantityInStock(newQuantity);
+
+        SparePart updatedPart = sparePartRepository.save(sparePart);
+        log.info("Stock updated for code '{}'. New stock level: {}", partCode, newQuantity);
+
+        checkAndSendLowStockAlertEmail(updatedPart);
+
+        return mapToResponseDTO(updatedPart);
+    }
+
     private String generateNextPartCode() {
         long currentCount = sparePartRepository.getSparePartCount();
         long nextNumber = currentCount + 1;
