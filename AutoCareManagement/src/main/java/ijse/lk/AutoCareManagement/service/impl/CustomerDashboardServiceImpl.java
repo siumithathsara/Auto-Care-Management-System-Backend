@@ -34,35 +34,34 @@ public class CustomerDashboardServiceImpl implements CustomerDashboardService {
     @Override
     @Transactional(readOnly = true)
     public CustomerDashboardDTO getCustomerDashboardData(String customerCode) {
-        log.info("Fetching dashboard summary data for customerCode: {}", customerCode);
+        log.info("Fetching dashboard summary data for customerCode/username: {}", customerCode);
 
-        // Validate active customer
-        Optional<User> userOptional = userRepository.findByUserCodeAndStatus(customerCode, UserStatus.ACTIVE);
+        Optional<User> userOptional = userRepository.findByUserCodeOrUsernameAndStatus(customerCode);
         if (userOptional.isEmpty()) {
-            log.warn("Dashboard data fetch failed: Active customer not found with code: {}", customerCode);
+            log.warn("Dashboard data fetch failed: Active customer not found with code/username: {}", customerCode);
             throw new CustomException(404, "Active customer not found with code: " + customerCode);
         }
 
-        long totalVehicles = vehicleRepository.countByCustomerUserCode(customerCode);
+        User user = userOptional.get();
+        String realUserCode = user.getUserCode();
+
+        long totalVehicles = vehicleRepository.countByCustomerUserCode(realUserCode);
 
         List<JobStatus> activeStatuses = List.of(JobStatus.IN_PROGRESS);
 
+        long activeJobs = jobCardRepository.countByVehicleCustomerUserCodeAndStatusIn(realUserCode, activeStatuses);
+        long completedJobs = jobCardRepository.countByVehicleCustomerUserCodeAndStatus(realUserCode, JobStatus.COMPLETED);
 
-        long activeJobs = jobCardRepository.countByVehicleCustomerUserCodeAndStatusIn(customerCode, activeStatuses);
-        long completedJobs = jobCardRepository.countByVehicleCustomerUserCodeAndStatus(customerCode, JobStatus.COMPLETED);
-
-
-        Double pendingAmount = invoiceRepository.findTotalPendingPaymentByCustomerCode(customerCode, PaymentStatus.UNPAID);
+        Double pendingAmount = invoiceRepository.findTotalPendingPaymentByCustomerCode(realUserCode, PaymentStatus.UNPAID);
         double pendingPaymentAmount = (pendingAmount != null) ? pendingAmount : 0.0;
 
-
         List<AppointmentSummaryDTO> approvedAppointments = appointmentRepository
-                .findApprovedUpcomingAppointmentsByCustomerCode(customerCode, LocalDate.now(), AppointmentStatus.CONFIRMED);
+                .findApprovedUpcomingAppointmentsByCustomerCode(realUserCode, LocalDate.now(), AppointmentStatus.CONFIRMED);
 
-        List<JobCardSummaryDTO> activeJobsList = jobCardRepository.findActiveJobsByCustomerCode(customerCode, activeStatuses);
-        List<JobCardSummaryDTO> recentJobHistoryList = jobCardRepository.findTop5ByVehicleCustomerUserCodeOrderByCheckInTimeDesc(customerCode);
+        List<JobCardSummaryDTO> activeJobsList = jobCardRepository.findActiveJobsByCustomerCode(realUserCode, activeStatuses);
+        List<JobCardSummaryDTO> recentJobHistoryList = jobCardRepository.findTop5ByVehicleCustomerUserCodeOrderByCheckInTimeDesc(realUserCode);
 
-        log.info("Successfully fetched dashboard data for customerCode: {}", customerCode);
+        log.info("Successfully fetched dashboard data for real userCode: {}", realUserCode);
 
         return new CustomerDashboardDTO(
                 totalVehicles,

@@ -58,7 +58,7 @@ public class UserController {
     }
 // call the service to get user by username
     @GetMapping(value = "/get-user/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'CUSTOMER')")
     public CommonResponse getUserByUsername(@PathVariable String username){
         UserResponseDTO userResponseDTO = userService.getUserByUsername(username);
         return new CommonResponse(200, userResponseDTO, "User fetched successfully!");

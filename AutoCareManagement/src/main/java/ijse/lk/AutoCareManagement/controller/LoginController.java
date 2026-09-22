@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static ijse.lk.AutoCareManagement.constant.ResponseStatusCode.OPERATION_SUCCESS;
 
 @RestController
@@ -26,10 +29,14 @@ public class LoginController {
     }
 
     @PostMapping(value = "/login",produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommonResponse authLogin(@RequestBody AuthDTO authDTO){
+    public CommonResponse authLogin(@RequestBody AuthDTO authDTO) {
         UserResponseDTO userDetails = userService.getUserDetails(authDTO.getUsername(), authDTO.getPassword());
-        System.out.println("API called here");
         String token = jwtUtil.generateToken(userDetails);
-        return new CommonResponse(OPERATION_SUCCESS,token,"JWT Token");
+
+        Map<String, Object> responseData = new HashMap<>();
+        responseData.put("token", token);
+        responseData.put("role", userDetails.getRole());
+
+        return new CommonResponse(OPERATION_SUCCESS, responseData, "Login Success");
     }
 }

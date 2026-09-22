@@ -20,7 +20,7 @@ public class CustomerDashboardController {
 
 //         Get dashboard summary data by customer code
     @GetMapping(value = "/get-by-customer/{customerCode}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'CUSTOMER')")
+    @PreAuthorize("hasAnyAuthority( 'CUSTOMER')")
     public CommonResponse getCustomerDashboardData(@PathVariable String customerCode) {
         CustomerDashboardDTO dashboardData = customerDashboardService.getCustomerDashboardData(customerCode);
         return new CommonResponse(200, dashboardData, "Customer dashboard data fetched successfully!");

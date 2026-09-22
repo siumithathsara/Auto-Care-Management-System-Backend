@@ -37,4 +37,10 @@ public class UserResponseDTO {
         this.role = role;
         this.password = password;
     }
+    public UserResponseDTO(long userId, String userCode, String username, Role role) {
+        this.userId = userId;
+        this.userCode = userCode;
+        this.username = username;
+        this.role = role;
+    }
 }
