@@ -95,4 +95,11 @@ public class UserController {
         return new CommonResponse(200, count, "Total user count fetched successfully!");
     }
 
+    @GetMapping(value = "/getUsersByStatus/{status}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public CommonResponse getUsersByStatus(@PathVariable String status) {
+        List<UserResponseDTO> users = userService.getUsersByStatus(status);
+        return new CommonResponse(200, users, "Users fetched by status successfully!");
+    }
+
 }

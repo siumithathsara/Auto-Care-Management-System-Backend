@@ -312,6 +312,28 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<UserResponseDTO> getUsersByStatus(String status) {
+        log.info("Fetching users by status: {}", status);
+
+        List<User> users;
+        if ("ALL".equalsIgnoreCase(status)) {
+            users = userRepository.findAll();
+        } else {
+
+            UserStatus userStatus = UserStatus.valueOf(status.toUpperCase());
+            users = userRepository.findAllByStatus(userStatus);
+        }
+
+        List<UserResponseDTO> responseDTOList = new ArrayList<>();
+        for (User user : users) {
+            responseDTOList.add(mapToResponseDTO(user));
+        }
+        return responseDTOList;
+    }
+
+
     private String generateUserCode(String priffix) {
         log.debug("Generating user code with prefix: {}", priffix);
         long currentCount = userRepository.getAllUserCount();

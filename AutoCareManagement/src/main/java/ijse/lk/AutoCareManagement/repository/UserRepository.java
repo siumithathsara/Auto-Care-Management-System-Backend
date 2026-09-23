@@ -39,4 +39,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u WHERE (u.userCode = :identifier OR u.username = :identifier) AND u.status = 'ACTIVE'")
     Optional<User> findByUserCodeOrUsernameAndStatus(@Param("identifier") String identifier);
 
+    List<User> findByStatus(String status);
+
+
 }

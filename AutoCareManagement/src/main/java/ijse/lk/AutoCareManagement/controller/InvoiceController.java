@@ -26,10 +26,11 @@ public class InvoiceController {
     private final ReportService reportService;
 
 
-//   create invoice
-    @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public CommonResponse createInvoice(@Valid @RequestBody InvoiceRequestDTO dto,
+
+// create invoice
+@PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
+@PreAuthorize("hasAnyAuthority('ADMIN')")
+public CommonResponse createInvoice(@Valid @RequestBody InvoiceRequestDTO dto,
                                     Authentication authentication) {
     String username = authentication.getName();
 
@@ -39,17 +40,32 @@ public class InvoiceController {
     responseData.put("invoice", createdInvoice);
 
     try {
-
         Map<String, Object> jasperParams = new HashMap<>();
+
         jasperParams.put("invoiceCode", createdInvoice.getInvoiceCode());
+        jasperParams.put("issuedDate", createdInvoice.getIssuedDate() != null ? createdInvoice.getIssuedDate().toString() : "N/A");
+        jasperParams.put("paymentStatus", createdInvoice.getPaymentStatus() != null ? createdInvoice.getPaymentStatus().name() : "N/A");
+        jasperParams.put("paymentMethod", createdInvoice.getPaymentMethod() != null ? createdInvoice.getPaymentMethod().name() : "Cash / Card");
+
+        jasperParams.put("customerName", createdInvoice.getCustomerUsername());
+        jasperParams.put("customerPhone", createdInvoice.getCustomerPhone());
+
+        jasperParams.put("vehicleNo", createdInvoice.getLicensePlate());
+        jasperParams.put("vehicleModel", createdInvoice.getModel());
+
+        jasperParams.put("subtotal", createdInvoice.getSubtotal());
+        jasperParams.put("taxAmount", createdInvoice.getTaxAmount());
+        jasperParams.put("discount", createdInvoice.getDiscount());
         jasperParams.put("totalAmount", createdInvoice.getTotalAmount());
+        jasperParams.put("paidAmount", createdInvoice.getPaidAmount());
+        jasperParams.put("balanceAmount", createdInvoice.getBalanceAmount());
 
         byte[] pdfBytes = reportService.generateInvoicePdfByte(jasperParams);
         String base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);
 
         responseData.put("pdfBase64", base64Pdf);
     } catch (Exception e) {
-
+        e.printStackTrace();
         responseData.put("pdfBase64", null);
     }
 

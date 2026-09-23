@@ -29,7 +29,7 @@ public class SparePartController {
 
 //     get spare part details by code
     @GetMapping(value = "/get-by-code/{partCode}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'ADVISOR', 'MECHANIC')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'ADVISOR')")
     public CommonResponse getSparePartByCode(@PathVariable String partCode) {
         SparePartResponseDTO response = sparePartService.getSparePartByCode(partCode);
         return new CommonResponse(200, response, "Spare Part fetched successfully!");
@@ -37,7 +37,7 @@ public class SparePartController {
 
 //     get all active spare parts
     @GetMapping(value = "/get-all", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'ADVISOR', 'MECHANIC')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'ADVISOR')")
     public CommonResponse getAllSpareParts() {
         List<SparePartResponseDTO> list = sparePartService.getAllSpareParts();
         return new CommonResponse(200, list, "All Spare Parts fetched successfully!");

@@ -31,5 +31,8 @@ public interface UserService {
 
     UserResponseDTO activateCustomer(String userCode);
 
+    List<UserResponseDTO> getUsersByStatus(String status);
+
+
 
 }
